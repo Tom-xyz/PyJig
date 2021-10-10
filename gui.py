@@ -5,34 +5,21 @@ import os
 import base64
 
 
+
 def resize(input_file, size):
     image = Image.open(input_file)
     width, height = image.size
-    print(f"The original image size is {width} wide x {height} high")
+    print(f"The original image size is {width}px wide x {height}px high")
     new_width, new_height = size
     scale = min(new_height / height, new_width / width)
     resized_image = image.resize(
         (int(width * scale), int(height * scale)), Image.ANTIALIAS)
     resized_image = image.resize(size)
     width, height = resized_image.size
-    print(f"The resized image size is {width} wide x {height} high")
+    print(f"The resized image size is {width}px wide x {height}px high")
     return resized_image
 
-
-def convert_file_to_base64(filename):
-    try:
-        contents = open(filename, 'rb').read()
-        encoded = base64.b64encode(contents)
-        sg.clipboard_set(encoded)
-        sg.popup('Copied to your clipboard!',
-                 'Keep window open until you have pasted the base64 bytestring')
-    except Exception as error:
-        sg.popup_error('Cancelled - An error occurred', error)
-
-
-# output_placeholder = sg.Sizer(h_pixels=200, v_pixels=500)
-
-image_placeholder = sg.Sizer(h_pixels=1500, v_pixels=800)
+# image_placeholder = sg.Sizer(h_pixels=1500, v_pixels=800)
 
 input_frame = sg.Frame(
     title='Input Image',
@@ -40,7 +27,17 @@ input_frame = sg.Frame(
         [sg.Input(key='-IN-', enable_events=True), sg.FileBrowse()],
         [sg.T('Original size'), sg.T(k='-ORIG WIDTH-'), sg.T('X'), sg.T(k='-ORIG HEIGHT-')],
         [sg.T('Resized size'), sg.T(k='-NEW WIDTH-'), sg.T('X'), sg.T(k='-NEW HEIGHT-')]
-    ]
+    ],
+    expand_x=True
+)
+
+actions_frame = sg.Frame(
+    title='Actions',
+    layout=[
+        [sg.Button(button_text='Crop')]
+    ],
+    expand_y=True,
+    expand_x=True
 )
 
 output_frame = sg.Frame(
@@ -53,26 +50,40 @@ output_frame = sg.Frame(
     expand_x=True
 )
 
+graph = sg.Graph(
+    canvas_size=(1500, 800),
+    graph_bottom_left=(0, 0),
+    graph_top_right=(1500, 800),
+    key="-GRAPH-",
+    enable_events=True
+)
+
+
+# image = sg.Image(key="-IMAGE-", enable_events=True)
+# image.bind('<Button-1>', '_Left_Click')
+
 viewer_frame = sg.Frame(
-    title='View Image',
+    title='Jigsaw Viewer',
     layout=[
-        [image_placeholder],
-        [sg.Image(key="-IMAGE-")]
+        [graph]
     ]
 )
+
+viewer_col = sg.Column(layout=[[viewer_frame]], expand_y=True)
+
+editor_col = sg.Column(layout=[[input_frame],[actions_frame],[output_frame]], expand_y=True)
 
 
 def main():
     layout = [
-        [sg.Column(layout=[[viewer_frame]], background_color='red'), sg.Column(layout=[[input_frame],[output_frame]], background_color='green', expand_y=True)],
-        
+        [viewer_col, editor_col],
     ]
 
     window = sg.Window('PyJig', layout, icon=image_resize_icon)
 
     while True:
         event, values = window.read()
-        print(event, values)
+        # print(event, values) ENABLE TO SEE ALL EVENTS
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
         infile = values['-IN-']
@@ -91,8 +102,10 @@ def main():
                 # Set viewer image
                 bio = io.BytesIO()
                 image.save(bio, format="PNG")
-                image_placeholder.hide_row()
-                window["-IMAGE-"].update(data=bio.getvalue())
+                window["-GRAPH-"].draw_image(data=bio.getvalue(), location=(0,800))
+        elif '-GRAPH-' in event:
+            print(f'Mouse clicked at {values.get("-GRAPH-", None)}')
+
     window.close()
 
 

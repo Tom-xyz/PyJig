@@ -1,2 +1,2 @@
 # Pyjig
-Python jigsaw puzzle solver
+Jigsaw puzzle solver/aid written in Python
