@@ -2,7 +2,7 @@ import os
 import io
 import PySimpleGUI as sg
 
-from utils import resize
+from utils import resize, resize_file
 from PIL import Image
 
 
@@ -39,8 +39,8 @@ class PyJigGUI():
 
     graph = sg.Graph(
         canvas_size=(1500, 800),
-        graph_bottom_left=(0, 0),
-        graph_top_right=(1500, 800),
+        graph_bottom_left=(0, 800),
+        graph_top_right=(1500, 0),
         key="-GRAPH-",
         enable_events=True
     )
@@ -57,35 +57,74 @@ class PyJigGUI():
     editor_col = sg.Column(layout=[[input_frame], [actions_frame], [output_frame]], expand_y=True)
 
     def __init__(self):
+
+        # Root GUI layout
         self.layout = [
             [self.viewer_col, self.editor_col],
         ]
 
-    def render(self):
-        window = sg.Window('PyJig', self.layout)
+        # Current editor action (Crop)
+        self.action = None
 
+        # x,y points (top left, bottom left, top right, bottom right)
+        self.crop_cords = []
+
+        self.orignal_image = None
+        self.viewer_image = None
+
+        self.window = sg.Window('PyJig', self.layout)
+
+    def render(self):
         while True:
-            event, values = window.read()
+            event, values = self.window.read()
             if event == sg.WIN_CLOSED or event == 'Exit':
                 break
             infile = values['-IN-']
             if event == '-IN-':
                 if os.path.isfile(infile):
                     # Read file
-                    image = Image.open(infile)
-                    window['-ORIG WIDTH-'].update(image.size[0])
-                    window['-ORIG HEIGHT-'].update(image.size[1])
+                    self.orignal_image = Image.open(infile)
+                    self.window['-ORIG WIDTH-'].update(self.orignal_image.size[0])
+                    self.window['-ORIG HEIGHT-'].update(self.orignal_image.size[1])
 
                     # Resize to static size
-                    image = resize(infile, (1500, 800))
-                    window['-NEW WIDTH-'].update(image.size[0])
-                    window['-NEW HEIGHT-'].update(image.size[1])
+                    self.viewer_image = resize_file(infile, (1500, 800))
+                    self.window['-NEW WIDTH-'].update(self.viewer_image.size[0])
+                    self.window['-NEW HEIGHT-'].update(self.viewer_image.size[1])
 
                     # Set viewer image
-                    bio = io.BytesIO()
-                    image.save(bio, format="PNG")
-                    window["-GRAPH-"].draw_image(data=bio.getvalue(), location=(0, 800))
-            if '-GRAPH-' in event:
-                print(f'Mouse clicked at {values.get("-GRAPH-", None)}')
+                    self.draw_viewer_image(self.viewer_image)
 
-        window.close()
+            if '-GRAPH-' in event:
+                self.handle_graph_event(event, values)
+            if event == 'Crop':
+                self.handle_crop_button_event(event, values)
+
+        self.window.close()
+
+    def handle_graph_event(self, event, values):
+        xy_cords = values.get("-GRAPH-", None)
+        print(f'Mouse clicked at {xy_cords}')
+
+        # Store X,Y cords if cropping
+        if self.action == 'Crop':
+            self.crop_cords.append(xy_cords)
+            print(f'Stored crop cords: {xy_cords}')
+
+            if len(self.crop_cords) == 2:
+                self.viewer_image = resize(self.viewer_image.crop(
+                    (self.crop_cords[0][0], self.crop_cords[0][1], self.crop_cords[1][0], self.crop_cords[1][1])), (1500, 800))
+                self.draw_viewer_image(self.viewer_image)
+
+    def handle_crop_button_event(self, event, values):
+        if self.action:
+            self.action = None
+            self.crop_cords = []
+        else:
+            self.action = 'Crop'
+            print('Entering cropping mode, click on the 2 corners of the puzzle (top left, bottom right)')
+
+    def draw_viewer_image(self, image):
+        bio = io.BytesIO()
+        image.save(bio, format="PNG")
+        self.window["-GRAPH-"].draw_image(data=bio.getvalue(), location=(0, 0))

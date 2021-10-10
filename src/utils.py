@@ -1,7 +1,7 @@
 from PIL import Image
 
-def resize(input_file, size):
-    image = Image.open(input_file)
+
+def resize(image, size):
     width, height = image.size
     print(f"The original image size is {width}px wide x {height}px high")
     new_width, new_height = size
@@ -12,3 +12,8 @@ def resize(input_file, size):
     width, height = resized_image.size
     print(f"The resized image size is {width}px wide x {height}px high")
     return resized_image
+
+
+def resize_file(input_file, size):
+    image = Image.open(input_file)
+    return resize(image, size)
