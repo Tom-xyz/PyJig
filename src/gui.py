@@ -141,7 +141,7 @@ class PyJigGUI():
         event, values = window.read()
         window.close()
 
-        self.graph.DrawRectangle((200, 200), (250, 300), line_color="red", line_width=3)
+        self.graph.DrawRectangle((200, 200), (230, 230), line_color="red", line_width=3)
 
     def handle_grid_button_event(self, event, values):
         layout = [
