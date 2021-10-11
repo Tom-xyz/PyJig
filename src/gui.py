@@ -3,7 +3,7 @@ import io
 import PySimpleGUI as sg
 import cv2
 
-from utils import resize, resize_file
+from utils import resize, resize_file, cut_image_to_grid
 from PIL import Image
 
 
@@ -160,7 +160,10 @@ class PyJigGUI():
         puzzle_width = values[1]
         puzzle_height = values[2]
 
-        print(f'Total puzzle pieces: {puzzle_total} = (width: {puzzle_width} * height: {puzzle_height})')
+        print(f'Drawing grid: Total puzzle pieces: {puzzle_total} = (width: {puzzle_width} * height: {puzzle_height})')
+
+        grid_image = cut_image_to_grid(self.viewer_image)
+        self.draw_viewer_image(grid_image)
 
     def draw_viewer_image(self, image, pos=(0, 0)):
         bio = io.BytesIO()
