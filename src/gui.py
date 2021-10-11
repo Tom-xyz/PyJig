@@ -1,12 +1,14 @@
 import os
 import io
 import PySimpleGUI as sg
+import cv2
 
 from utils import resize, resize_file
 from PIL import Image
 
 
 class PyJigGUI():
+    sg.theme('DarkAmber')
 
     input_frame = sg.Frame(
         title='Input Image',
@@ -21,7 +23,7 @@ class PyJigGUI():
     actions_frame = sg.Frame(
         title='Actions',
         layout=[
-            [sg.Button(button_text='Crop')]
+            [sg.Button(button_text='Crop'), sg.Button(button_text='Grid'), sg.Button(button_text='Search')],
         ],
         expand_y=True,
         expand_x=True
@@ -38,8 +40,8 @@ class PyJigGUI():
     )
 
     graph = sg.Graph(
-        canvas_size=(1500, 800),
-        graph_bottom_left=(0, 800),
+        canvas_size=(1500, 840),
+        graph_bottom_left=(0, 840),
         graph_top_right=(1500, 0),
         key="-GRAPH-",
         enable_events=True
@@ -88,7 +90,7 @@ class PyJigGUI():
                     self.window['-ORIG HEIGHT-'].update(self.orignal_image.size[1])
 
                     # Resize to static size
-                    self.viewer_image = resize_file(infile, (1500, 800))
+                    self.viewer_image = resize_file(infile, (1500, 840))
                     self.window['-NEW WIDTH-'].update(self.viewer_image.size[0])
                     self.window['-NEW HEIGHT-'].update(self.viewer_image.size[1])
 
@@ -99,6 +101,10 @@ class PyJigGUI():
                 self.handle_graph_event(event, values)
             if event == 'Crop':
                 self.handle_crop_button_event(event, values)
+            if event == 'Grid':
+                self.handle_grid_button_event(event, values)
+            if event == 'Search':
+                self.handle_search_button_event(event, values)
 
         self.window.close()
 
@@ -113,8 +119,10 @@ class PyJigGUI():
 
             if len(self.crop_cords) == 2:
                 self.viewer_image = resize(self.viewer_image.crop(
-                    (self.crop_cords[0][0], self.crop_cords[0][1], self.crop_cords[1][0], self.crop_cords[1][1])), (1500, 800))
+                    (self.crop_cords[0][0], self.crop_cords[0][1], self.crop_cords[1][0], self.crop_cords[1][1])), (1500, 840))
                 self.draw_viewer_image(self.viewer_image)
+                self.crop_cords = []
+                self.action = None
 
     def handle_crop_button_event(self, event, values):
         if self.action:
@@ -124,7 +132,41 @@ class PyJigGUI():
             self.action = 'Crop'
             print('Entering cropping mode, click on the 2 corners of the puzzle (top left, bottom right)')
 
-    def draw_viewer_image(self, image):
+    def handle_search_button_event(self, event, values):
+        layout = [
+            [sg.Input(key='-IN-SEARCH-', enable_events=True), sg.FileBrowse()]
+        ]
+
+        window = sg.Window('Draw grid', layout)
+        event, values = window.read()
+        window.close()
+
+        self.graph.DrawRectangle((200, 200), (250, 300), line_color="red", line_width=3)
+
+    def handle_grid_button_event(self, event, values):
+        layout = [
+            [sg.Text('Please enter some information about the jigsaw puzzle')],
+            [sg.Text('Total pieces', size=(15, 1)), sg.InputText()],
+            [sg.Text('Width pieces', size=(15, 1)), sg.InputText()],
+            [sg.Text('Height pieces', size=(15, 1)), sg.InputText()],
+            [sg.Submit(), sg.Cancel()]
+        ]
+
+        window = sg.Window('Draw grid', layout)
+        event, values = window.read()
+        window.close()
+
+        puzzle_total = values[0]
+        puzzle_width = values[1]
+        puzzle_height = values[2]
+
+        print(f'Total puzzle pieces: {puzzle_total} = (width: {puzzle_width} * height: {puzzle_height})')
+
+    def draw_viewer_image(self, image, pos=(0, 0)):
         bio = io.BytesIO()
         image.save(bio, format="PNG")
-        self.window["-GRAPH-"].draw_image(data=bio.getvalue(), location=(0, 0))
+        self.window["-GRAPH-"].draw_image(data=bio.getvalue(), location=pos)
+
+    def slice_2d_grid(self, image, width, height):
+        # TODO: Impl
+        print()
