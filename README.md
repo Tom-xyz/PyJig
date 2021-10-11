@@ -1,6 +1,5 @@
-# Pyjig
+# PyJig
 Jigsaw puzzle solver/aid written in Python
-
 
 # Notes for myself
 Things to attempt include:
