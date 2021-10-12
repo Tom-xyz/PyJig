@@ -5,21 +5,10 @@ import cv2
 
 
 def resize(image, size):
-    width, height = image.size
-    print(f"The original image size is {width}px wide x {height}px high")
     new_width, new_height = size
-    scale = min(new_height / height, new_width / width)
-    resized_image = image.resize(
-        (int(width * scale), int(height * scale)), Image.ANTIALIAS)
     resized_image = image.resize(size)
-    width, height = resized_image.size
-    print(f"The resized image size is {width}px wide x {height}px high")
+    print(f"The resized image size is {new_width}px wide x {new_height}px high")
     return resized_image
-
-
-def resize_file(input_file, size):
-    image = Image.open(input_file)
-    return resize(image, size)
 
 
 def cut_image_to_grid(pil_image):
