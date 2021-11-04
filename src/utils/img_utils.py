@@ -5,9 +5,7 @@ import cv2
 
 
 def resize(image, size):
-    new_width, new_height = size
     resized_image = image.resize(size)
-    print(f"The resized image size is {new_width}px wide x {new_height}px high")
     return resized_image
 
 

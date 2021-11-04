@@ -4,7 +4,7 @@ import io
 
 from PIL import Image
 
-from gui.elements import grid_window, search_piece_window
+# from gui.elements import search_piece_window
 from utils.img_utils import resize, cut_image_to_grid
 
 
@@ -32,8 +32,27 @@ def handle_input_image_event(context, event, values):
     draw_viewer_image(context, viewer_image)
 
 
-def handle_sg_graph_event(context, event, values):
-    click_xy_cords = values.get('sg_graph', None)
+def handle_input_piece_event(context, event, values):
+    print('Searching for piece')
+
+    infile = values['input_piece']
+    original_piece_image = Image.open(infile)
+    viewer_piece_image = resize(original_piece_image, (1500, 840))
+
+    print('Scaled piece image to Jigsaw puzzle')
+
+    # puzzle.grid.search()
+
+    piece_x_pos = (0, 0)
+    piece_y_pos = (0, 0)
+    viewer = context.window['viewer']
+    viewer.DrawRectangle((200, 200), (230, 230), line_color="red", line_width=3)
+
+    print(f'Found piece match at ({piece_x_pos}, {piece_y_pos})')
+
+
+def handle_viewer_event(context, event, values):
+    click_xy_cords = values.get('viewer', None)
     print(f'Mouse clicked at {click_xy_cords}')
 
     action = context.get('action')
@@ -50,31 +69,19 @@ def handle_sg_graph_event(context, event, values):
         print(f'Succesfully cropped image')
 
 
-def handle_crop_event(context, event, values):
+def handle_button_crop_event(context, event, values):
     context.set('action', 'crop')
     context.set('crop_cords', [])
     print('Entered cropping mode, click on the 2 corners of the puzzle (top left, bottom right)')
 
 
-def handle_search_event(context, event, values):
-    event, values = search_piece_window.read()
-    graph = context.window['sg_graph']
-    graph.DrawRectangle((200, 200), (230, 230), line_color="red", line_width=3)
-    search_piece_window.close()
-
-
-def handle_grid_event(context, event, values):
-    event, values = grid_window.read()
-    puzzle_total, puzzle_width, puzzle_height = values
-
-    print(f'Drawing grid: Total puzzle pieces: {puzzle_total} = (width: {puzzle_width} * height: {puzzle_height})')
+def handle_button_grid_event(context, event, values):
     grid_image = cut_image_to_grid(context.get('viewer_image'))
     draw_viewer_image(context, grid_image)
-    grid_window.close()
 
 
 def draw_viewer_image(context, image, pos=(0, 0)):
     bio = io.BytesIO()
     image.save(bio, format="PNG")
     context.set('viewer_image', image)
-    context.window["sg_graph"].draw_image(data=bio.getvalue(), location=pos)
+    context.window["viewer"].draw_image(data=bio.getvalue(), location=pos)

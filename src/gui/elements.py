@@ -1,54 +1,64 @@
 import PySimpleGUI as sg
 
 
-def build_default_frame(title, layout, expand_y=True, expand_x=True):
+def frame(title, layout, expand_y=True, expand_x=True):
     return sg.Frame(title, layout, expand_y=expand_y, expand_x=expand_x)
 
 
-def build_default_column(layout, expand_y=True, expand_x=True):
+def column(layout, expand_y=True, expand_x=True):
     return sg.Column(layout, expand_y=expand_y, expand_x=expand_x)
+
+
+def button(text):
+    return sg.Button(button_text=text, key=f'button_{text}')
 
 
 # DEFAULT THEME #
 sg.theme('DarkAmber')
 
 # GUI Frames #
-input_frame = build_default_frame('Input', [
-    [sg.Input(key='input_image', enable_events=True), sg.FileBrowse()],
-    [sg.T('Original size'), sg.T(k='original_img_height'), sg.T('X'), sg.T(k='original_img_width')],
-    [sg.T('Resized size'), sg.T(k='new_img_width'), sg.T('X'), sg.T(k='new_img_height')]
-])
 
 # LEFT COL #
-graph = sg.Graph(
+jigsaw_viewer = sg.Graph(
     canvas_size=(1500, 840),
     graph_bottom_left=(0, 840),
     graph_top_right=(1500, 0),
-    key='sg_graph',
+    key='viewer',
     enable_events=True
 )
-viewer_frame = build_default_frame('Jigsaw Viewer', [[graph]])
+jigsaw_viewer_frame = frame('Jigsaw Viewer', [[jigsaw_viewer]])
 
 # RIGHT COL #
-actions_frame = build_default_frame('Actions', [
-    [sg.Button(button_text='crop'), sg.Button(button_text='grid'), sg.Button(button_text='search')]
-])
-log_frame = build_default_frame('Log', [
+piece_viewer = sg.Graph(
+    background_color='white',
+    canvas_size=(200, 200),
+    graph_bottom_left=(0, 100),
+    graph_top_right=(100, 0),
+    key='piece_viewer',
+    enable_events=True
+)
+piece_viewer_frame = frame('Piece Viewer', [[piece_viewer]], expand_y=False)
+
+piece_viewer_frame = frame('Piece Viewer', [[piece_viewer]], expand_y=False)
+
+input_frame = frame('Input', [
+        [sg.T('Load Jigsaw'), sg.In(key='input_image', enable_events=True), sg.FileBrowse()],
+        [sg.T('Original size'), sg.T(k='original_img_height'), sg.T('X'), sg.T(k='original_img_width')],
+        [sg.T('Resized size'), sg.T(k='new_img_width'), sg.T('X'), sg.T(k='new_img_height')],
+        [sg.HorizontalSeparator()],
+        [sg.T('Search Piece'), sg.In(key='input_piece', enable_events=True), sg.FileBrowse()],
+        [sg.T('Height pieces:'), sg.In(default_text=24, k='height_pieces', size=5), sg.T('Width pieces:'), sg.In(default_text=50, k='width_pieces', size=5)],
+        [sg.T('Height(cm):    '), sg.In(default_text=50, k='height_cm', size=5), sg.T('Width(cm):    '), sg.In(default_text=70, k='width_cm', size=5)],
+        [sg.T('Total pieces:'), sg.T(text='1000', k='total_pieces'), sg.T('Piece width:'), sg.T(text='30(px)', k='piece_width'), sg.T('Piece height:'), sg.T(text='30(px)', k='piece_height')],
+], expand_y=False)
+
+actions_frame = sg.Frame('Actions', [
+    [button('crop'), button('grid')]
+], expand_x=True)
+log_frame = frame('Log', [
     [sg.Output(key='log', expand_y=True, expand_x=True)]
 ])
 
 # GUI COLs #
-viewer_col = build_default_column([[viewer_frame]])
-editor_col = build_default_column([[input_frame], [actions_frame], [log_frame]])
-
-# EDITOR WINDOWS #
-grid_window = sg.Window('Search piece', [
-    [sg.Text('Please enter some information about the jigsaw puzzle')],
-    [sg.Text('Total pieces', size=(15, 1)), sg.InputText()],
-    [sg.Text('Width pieces', size=(15, 1)), sg.InputText()],
-    [sg.Text('Height pieces', size=(15, 1)), sg.InputText()],
-    [sg.Submit(), sg.Cancel()]
-])
-search_piece_window = sg.Window('Draw grid', [
-    [sg.Input(key='search_image', enable_events=True), sg.FileBrowse()]
-])
+viewer_col = column([[jigsaw_viewer_frame]])
+editor_col = column([[input_frame], [actions_frame], [log_frame]])
