@@ -39,8 +39,6 @@ piece_viewer = sg.Graph(
 )
 piece_viewer_frame = frame('Piece Viewer', [[piece_viewer]], expand_y=False)
 
-piece_viewer_frame = frame('Piece Viewer', [[piece_viewer]], expand_y=False)
-
 input_frame = frame('Input', [
         [sg.T('Load Jigsaw'), sg.In(key='input_image', enable_events=True), sg.FileBrowse()],
         [sg.T('Original size'), sg.T(k='original_img_height'), sg.T('X'), sg.T(k='original_img_width')],

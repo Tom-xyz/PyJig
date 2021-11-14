@@ -18,7 +18,7 @@ def convert_vid_to_imgs(video, frame_rate, output_dir):
         vidcap.set(cv2.CAP_PROP_POS_MSEC, sec * 1000)
         hasFrames, image = vidcap.read()
         if hasFrames:
-            file_path = output_dir + "image" + str(count) + ".jpg"
+            file_path = output_dir + str(count) + ".jpg"
             cv2.imwrite(file_path, image)  # save frame as JPG file
 
             print("Wrote image to path: " + file_path)
