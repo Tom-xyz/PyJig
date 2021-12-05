@@ -1,4 +1,3 @@
-
 import PySimpleGUI as sg
 import gui.event_handlers
 
@@ -11,7 +10,7 @@ class PyJigGUI():
     def __init__(self):
 
         self.layout = [[viewer_col, editor_col]]
-        self.window = sg.Window('PyJig', self.layout)
+        self.window = sg.Window('PyJig', self.layout, resizable=True)
         self.context = WindowContext(self.window)
 
     def render(self):

@@ -5,7 +5,7 @@ import io
 from PIL import Image
 
 # from gui.elements import search_piece_window
-from utils.img_utils import resize, cut_image_to_grid
+from src.utils.img_utils import resize, cut_image_to_grid
 
 
 def handle_None_event(*_):
@@ -78,6 +78,10 @@ def handle_button_crop_event(context, event, values):
 def handle_button_grid_event(context, event, values):
     grid_image = cut_image_to_grid(context.get('viewer_image'))
     draw_viewer_image(context, grid_image)
+
+
+def handle_button_debug_event(context, event, values):
+    print()
 
 
 def draw_viewer_image(context, image, pos=(0, 0)):

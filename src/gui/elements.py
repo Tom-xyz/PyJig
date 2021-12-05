@@ -1,8 +1,8 @@
 import PySimpleGUI as sg
 
 
-def frame(title, layout, expand_y=True, expand_x=True):
-    return sg.Frame(title, layout, expand_y=expand_y, expand_x=expand_x)
+def frame(title, layout, expand_y=True, expand_x=True, **kwargs):
+    return sg.Frame(title, layout, expand_y=expand_y, expand_x=expand_x, **kwargs)
 
 
 def column(layout, expand_y=True, expand_x=True):
@@ -14,15 +14,15 @@ def button(text):
 
 
 # DEFAULT THEME #
-sg.theme('DarkAmber')
+sg.theme('DarkGrey11')
 
 # GUI Frames #
 
 # LEFT COL #
 jigsaw_viewer = sg.Graph(
-    canvas_size=(1500, 840),
+    canvas_size=(750, 420),
     graph_bottom_left=(0, 840),
-    graph_top_right=(1500, 0),
+    graph_top_right=(750, 0),
     key='viewer',
     enable_events=True
 )
@@ -54,9 +54,9 @@ actions_frame = sg.Frame('Actions', [
     [button('crop'), button('grid')]
 ], expand_x=True)
 log_frame = frame('Log', [
-    [sg.Output(key='log', expand_y=True, expand_x=True)]
+    [sg.Multiline(key='log', expand_y=True, expand_x=True, echo_stdout_stderr=True, autoscroll=True, reroute_stdout=True)]
 ])
 
 # GUI COLs #
 viewer_col = column([[jigsaw_viewer_frame]])
-editor_col = column([[input_frame], [actions_frame], [log_frame]])
+editor_col = column([[input_frame], [actions_frame], [log_frame], [sg.Debug(key='button_debug')]])
