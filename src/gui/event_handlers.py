@@ -4,7 +4,7 @@ import sys
 from PIL import Image
 
 # from gui.elements import search_piece_window
-from gui.elements import viewer_canvas_size
+from gui.elements import pv_canvas_size, jv_canvas_size
 from src.utils.img_utils import resize, cut_image_to_grid
 
 
@@ -19,7 +19,7 @@ def handle_Exit_event(*_):
 def handle_input_image_event(context, event, values):
     infile = values['input_image']
     original_image = Image.open(infile)
-    viewer_image = resize(original_image, viewer_canvas_size)
+    viewer_image = resize(original_image, jv_canvas_size)
 
     context.set('original_image', original_image)
     context.set('viewer_image', viewer_image)
@@ -29,18 +29,16 @@ def handle_input_image_event(context, event, values):
     context.window['new_img_width'].update(viewer_image.size[0])
     context.window['new_img_height'].update(viewer_image.size[1])
 
-    draw_viewer_image(context, viewer_image)
+    draw_image('viewer', context, viewer_image)
 
 
 def handle_input_piece_event(context, event, values):
     print('Searching for piece')
 
-    # TODO: Set viewer image
-    # infile = values['input_piece']
-    # original_piece_image = Image.open(infile)
-    # viewer_piece_image = resize(original_piece_image, viewer_canvas_size)
-
-    print('Scaled piece image to Jigsaw puzzle')
+    infile = values['input_piece']
+    original_piece_image = Image.open(infile)
+    piece_image = resize(original_piece_image, pv_canvas_size)
+    draw_image('piece_viewer', context, piece_image)
 
     # TODO: Search puzzle for piece
     # puzzle.grid.search()
@@ -59,15 +57,15 @@ def handle_viewer_event(context, event, values):
 
     action = context.get('action')
     crop_cords = context.get('crop_cords')
-    viewer_image = context.get('viewer_image')
+    viewer_image = context.get('viewer')
 
     crop_cords.append(click_xy_cords)
 
     if action == 'crop' and len(crop_cords) == 2:
         cropped_image = resize(
             viewer_image.crop((crop_cords[0][0], crop_cords[0][1], crop_cords[1][0], crop_cords[1][1])),
-            viewer_canvas_size)
-        draw_viewer_image(context, cropped_image)
+            jv_canvas_size)
+        draw_image('viewer', context, cropped_image)
         context.set('crop_cords', [])
         print('Successfully cropped image')
 
@@ -84,12 +82,12 @@ def handle_button_crop_event(context, event, values):
 
 
 def handle_button_grid_event(context, event, values):
-    grid_image = cut_image_to_grid(context.get('viewer_image'))
-    draw_viewer_image(context, grid_image)
+    grid_image = cut_image_to_grid(context.get('viewer'))
+    draw_image('viewer', context, grid_image)
 
 
-def draw_viewer_image(context, image, pos=(0, 0)):
+def draw_image(key, context, image, pos=(0, 0)):
     bio = io.BytesIO()
     image.save(bio, format="PNG")
-    context.set('viewer_image', image)
-    context.window["viewer"].draw_image(data=bio.getvalue(), location=pos)
+    context.set(key, image)
+    context.window[key].draw_image(data=bio.getvalue(), location=pos)

@@ -19,27 +19,27 @@ sg.theme('DarkGrey11')
 # GUI Frames #
 
 # LEFT COL #
-viewer_x_size = 750
-viewer_y_size = 550
-viewer_canvas_size = (viewer_x_size, viewer_y_size)
-viewer_bottom_left = (0, viewer_y_size)
-viewer_top_right = (viewer_x_size, 0)
-
+jv_x_size = 750
+jv_y_size = 550
+jv_canvas_size = (jv_x_size, jv_y_size)
 jigsaw_viewer = sg.Graph(
-    canvas_size=viewer_canvas_size,
-    graph_bottom_left=viewer_bottom_left,
-    graph_top_right=viewer_top_right,
+    canvas_size=jv_canvas_size,
+    graph_bottom_left=(0, jv_y_size),
+    graph_top_right=(jv_x_size, 0),
     key='viewer',
     enable_events=True
 )
 jigsaw_viewer_frame = frame('Jigsaw Viewer', [[jigsaw_viewer]])
 
 # RIGHT COL #
+pv_x_size = 150
+pv_y_size = 150
+pv_canvas_size = (pv_x_size, pv_y_size)
 piece_viewer = sg.Graph(
     background_color='white',
-    canvas_size=(150, 150),
-    graph_bottom_left=(0, 50),
-    graph_top_right=(50, 0),
+    canvas_size=pv_canvas_size,
+    graph_bottom_left=(0, pv_y_size),
+    graph_top_right=(pv_x_size, 0),
     key='piece_viewer',
     enable_events=True
 )
