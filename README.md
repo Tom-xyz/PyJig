@@ -7,7 +7,7 @@ Things to attempt include:
 * [TODO] Developing a library for realtime jigsaw puzzle analysis via OAK-D-LITE:
   * https://www.kickstarter.com/projects/opencv/opencv-ai-kit-oak-depth-camera-4k-cv-edge-object-detection
 
-# GUI Screenshot (version 0.1)
+# GUI Screenshot (version 0.2)
 ![](https://github.com/Tom-xyz/Pyjig/raw/main/preview.png)
 
 # Core Lib

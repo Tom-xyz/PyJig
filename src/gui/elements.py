@@ -19,10 +19,16 @@ sg.theme('DarkGrey11')
 # GUI Frames #
 
 # LEFT COL #
+viewer_x_size = 750
+viewer_y_size = 550
+viewer_canvas_size = (viewer_x_size, viewer_y_size)
+viewer_bottom_left = (0, viewer_y_size*2)
+viewer_top_right = (viewer_x_size, 0)
+
 jigsaw_viewer = sg.Graph(
-    canvas_size=(750, 420),
-    graph_bottom_left=(0, 840),
-    graph_top_right=(750, 0),
+    canvas_size=viewer_canvas_size,
+    graph_bottom_left=viewer_bottom_left,
+    graph_top_right=viewer_top_right,
     key='viewer',
     enable_events=True
 )
@@ -31,9 +37,9 @@ jigsaw_viewer_frame = frame('Jigsaw Viewer', [[jigsaw_viewer]])
 # RIGHT COL #
 piece_viewer = sg.Graph(
     background_color='white',
-    canvas_size=(200, 200),
-    graph_bottom_left=(0, 100),
-    graph_top_right=(100, 0),
+    canvas_size=(150, 150),
+    graph_bottom_left=(0, 50),
+    graph_top_right=(50, 0),
     key='piece_viewer',
     enable_events=True
 )
@@ -52,11 +58,11 @@ input_frame = frame('Input', [
 
 actions_frame = sg.Frame('Actions', [
     [button('crop'), button('grid')]
-], expand_x=True)
+])
 log_frame = frame('Log', [
     [sg.Multiline(key='log', expand_y=True, expand_x=True, echo_stdout_stderr=True, autoscroll=True, reroute_stdout=True)]
-])
+], expand_y=True)
 
 # GUI COLs #
 viewer_col = column([[jigsaw_viewer_frame]])
-editor_col = column([[input_frame], [actions_frame], [log_frame], [sg.Debug(key='button_debug')]])
+editor_col = column([[input_frame], [actions_frame],[piece_viewer_frame], [log_frame]])
