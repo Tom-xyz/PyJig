@@ -11,8 +11,9 @@ matplotlib = "3.4.3"
 imutils = "0.5.4"
 PySimpleGUI = "4.55.1"
 Pillow = "8.4.0"
+autopep8 = "1.6.0"
+flake8 = "4.0.1"
 
-[dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.9.8"

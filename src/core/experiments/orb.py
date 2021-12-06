@@ -49,21 +49,21 @@ print("Cropped piece to bounding box")
 orb = cv.ORB_create(nfeatures=100000, scoreType=cv.ORB_HARRIS_SCORE, edgeThreshold=20, scaleFactor=1.5)
 
 # find the keypoints and descriptors with SIFT
-kp1, des1 = orb.detectAndCompute(img_piece,None)
-kp2, des2 = orb.detectAndCompute(img_jigsaw,None)
+kp1, des1 = orb.detectAndCompute(img_piece, None)
+kp2, des2 = orb.detectAndCompute(img_jigsaw, None)
 
 
 # create BFMatcher object
 bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
 
 # Match descriptors.
-matches = bf.match(des1,des2)
+matches = bf.match(des1, des2)
 
 # Sort them in the order of their distance.
-matches = sorted(matches, key = lambda x:x.distance)
+matches = sorted(matches, key=lambda x: x.distance)
 
 # Draw first 10 matches.
-img3 = cv.drawMatches(img_piece,kp1,img_jigsaw,kp2,matches[:10], outImg=None, **draw_params())
+img3 = cv.drawMatches(img_piece, kp1, img_jigsaw, kp2, matches[:10], outImg=None, **draw_params())
 
 
 # # RESIZE & SHOW RESULTS

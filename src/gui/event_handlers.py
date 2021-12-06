@@ -70,9 +70,14 @@ def handle_viewer_event(context, event, values):
 
 
 def handle_button_crop_event(context, event, values):
-    context.set('action', 'crop')
     context.set('crop_cords', [])
-    print('Entered cropping mode, click on the 2 corners of the puzzle (top left, bottom right)')
+
+    if context.get('action') == 'crop':
+        context.set('action', 'none')
+        print('Exited cropping mode')
+    else:
+        context.set('action', 'crop')
+        print('Entered cropping mode, click on the 2 corners of the puzzle (top left, bottom right)')
 
 
 def handle_button_grid_event(context, event, values):

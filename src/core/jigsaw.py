@@ -1,5 +1,6 @@
 import cv2
 
+
 class JPiece:
 
     def __init__(self, image, x_pos, y_pos):
@@ -16,7 +17,6 @@ class JGrid:
 
     def template_match(v):
         print()
-
 
 
 class Jigsaw:

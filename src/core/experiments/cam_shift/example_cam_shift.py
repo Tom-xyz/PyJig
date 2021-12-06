@@ -24,18 +24,18 @@ Keys:
 
 # Python 2/3 compatibility
 from __future__ import print_function
+from video import presets
+import video
+import cv2 as cv
+import numpy as np
 import sys
 PY3 = sys.version_info[0] == 3
 
 if PY3:
     xrange = range
 
-import numpy as np
-import cv2 as cv
 
 # local module
-import video
-from video import presets
 
 
 class App(object):
@@ -67,10 +67,10 @@ class App(object):
     def show_hist(self):
         bin_count = self.hist.shape[0]
         bin_w = 24
-        img = np.zeros((256, bin_count*bin_w, 3), np.uint8)
+        img = np.zeros((256, bin_count * bin_w, 3), np.uint8)
         for i in xrange(bin_count):
             h = int(self.hist[i])
-            cv.rectangle(img, (i*bin_w+2, 255), ((i+1)*bin_w-2, 255-h), (int(180.0*i/bin_count), 255, 255), -1)
+            cv.rectangle(img, (i * bin_w + 2, 255), ((i + 1) * bin_w - 2, 255 - h), (int(180.0 * i / bin_count), 255, 255), -1)
         img = cv.cvtColor(img, cv.COLOR_HSV2BGR)
         cv.imshow('hist', img)
 
@@ -85,7 +85,7 @@ class App(object):
                 x0, y0, x1, y1 = self.selection
                 hsv_roi = hsv[y0:y1, x0:x1]
                 mask_roi = mask[y0:y1, x0:x1]
-                hist = cv.calcHist( [hsv_roi], [0], mask_roi, [16], [0, 180] )
+                hist = cv.calcHist([hsv_roi], [0], mask_roi, [16], [0, 180])
                 cv.normalize(hist, hist, 0, 255, cv.NORM_MINMAX)
                 self.hist = hist.reshape(-1)
                 self.show_hist()
@@ -98,11 +98,11 @@ class App(object):
                 self.selection = None
                 prob = cv.calcBackProject([hsv], [0], self.hist, [0, 180], 1)
                 prob &= mask
-                term_crit = ( cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 1 )
+                term_crit = (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 1)
                 track_box, self.track_window = cv.CamShift(prob, self.track_window, term_crit)
 
                 if self.show_backproj:
-                    vis[:] = prob[...,np.newaxis]
+                    vis[:] = prob[..., np.newaxis]
                 try:
                     cv.ellipse(vis, track_box, (0, 0, 255), 2)
                 except:
