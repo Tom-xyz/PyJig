@@ -190,7 +190,7 @@ def create_capture(source=0, fallback=presets['chess']):
         Class = classes.get(params.get('class', None), VideoSynthBase)
         try:
             cap = Class(**params)
-        except:
+        except:  # noqa
             pass
     else:
         cap = cv.VideoCapture(source)

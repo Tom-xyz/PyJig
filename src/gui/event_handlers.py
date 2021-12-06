@@ -35,12 +35,14 @@ def handle_input_image_event(context, event, values):
 def handle_input_piece_event(context, event, values):
     print('Searching for piece')
 
-    infile = values['input_piece']
-    original_piece_image = Image.open(infile)
-    viewer_piece_image = resize(original_piece_image, viewer_canvas_size)
+    # TODO: Set viewer image
+    # infile = values['input_piece']
+    # original_piece_image = Image.open(infile)
+    # viewer_piece_image = resize(original_piece_image, viewer_canvas_size)
 
     print('Scaled piece image to Jigsaw puzzle')
 
+    # TODO: Search puzzle for piece
     # puzzle.grid.search()
 
     piece_x_pos = (0, 0)
@@ -65,8 +67,7 @@ def handle_viewer_event(context, event, values):
         cropped_image = resize(viewer_image.crop((crop_cords[0][0], crop_cords[0][1], crop_cords[1][0], crop_cords[1][1])), viewer_canvas_size)
         draw_viewer_image(context, cropped_image)
         context.set('crop_cords', [])
-        action = None
-        print(f'Succesfully cropped image')
+        print('Successfully cropped image')
 
 
 def handle_button_crop_event(context, event, values):

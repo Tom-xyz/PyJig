@@ -105,7 +105,7 @@ class App(object):
                     vis[:] = prob[..., np.newaxis]
                 try:
                     cv.ellipse(vis, track_box, (0, 0, 255), 2)
-                except:
+                except:  # noqa
                     print(track_box)
 
             cv.imshow('camshift', vis)
@@ -123,6 +123,6 @@ if __name__ == '__main__':
     import sys
     try:
         video_src = "jigsaw_examples/1000_tropics_jigsaw/jigsaw_video.mov"
-    except:
+    except:  # noqa
         video_src = 0
     App(video_src).run()

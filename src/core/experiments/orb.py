@@ -1,10 +1,8 @@
 import numpy as np
 import cv2 as cv
-from matplotlib import pyplot as plt
 
 
-################################################################################
-################################ MOVE ELSEWHERE ################################
+# TODO: Move elsewhere
 # Pre-process the piece
 def identify_contour(piece, threshold_low=99, threshold_high=255):
     """Identify the contour around the piece"""

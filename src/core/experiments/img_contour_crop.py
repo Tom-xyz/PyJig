@@ -1,6 +1,3 @@
-# import the necessary packages
-import numpy as np
-import argparse
 import imutils
 import cv2
 
@@ -12,9 +9,6 @@ image = cv2.imread("jigsaw_examples/1000_tropics_jigsaw/piece_4.jpg")
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 thresh = cv2.threshold(gray, 110, 255,
                        cv2.THRESH_BINARY_INV)[1]
-# thresh = cv2.adaptiveThreshold(gray,110, cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY_INV,11,2)
-# cv2.imshow("Thresh", thresh)
-
 
 #  find the largest contour in the threshold image
 cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
@@ -38,10 +32,8 @@ width = int(output.shape[1] * scale_percent / 100)
 height = int(output.shape[0] * scale_percent / 100)
 dim = (width, height)
 
-
 # resize image
 image2 = cv2.resize(output, dim, interpolation=cv2.INTER_AREA)
-
 
 cv2.imshow("Original Contour", image2)
 

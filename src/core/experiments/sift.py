@@ -1,10 +1,8 @@
 import numpy as np
 import cv2 as cv
-from matplotlib import pyplot as plt
 
 
-################################################################################
-################################ MOVE ELSEWHERE ################################
+# TODO: Move elsewhere
 # Pre-process the piece
 def identify_contour(piece, threshold_low=99, threshold_high=255):
     """Identify the contour around the piece"""
@@ -20,12 +18,6 @@ def get_bounding_rect(contour):
     x, y, w, h = cv.boundingRect(contour)
     return x, y, w, h
 
-
-def draw_params(matches_mask=None):
-    return dict(matchColor=(0, 0, 255),  # draw matches in green color
-                singlePointColor=None,
-                matchesMask=matches_mask,  # draw only inliers
-                flags=cv.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 ################################################################################
 ################################################################################
 

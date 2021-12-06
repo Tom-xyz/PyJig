@@ -1,13 +1,7 @@
-#!/usr/bin/env python
-
-
-# Python 2/3 compatibility
-from __future__ import print_function
-
 import numpy as np
 import cv2 as cv
 
-from numpy import pi, sin, cos
+from numpy import sin, cos
 
 
 defaultSize = 512

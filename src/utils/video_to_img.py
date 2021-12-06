@@ -2,7 +2,7 @@ import cv2
 
 
 def convert_vid_to_imgs(video, frame_rate, output_dir):
-    """Given a video convert it to images and save to output_dir. 
+    """Given a video convert it to images and save to output_dir.
 
     Note: The output images are used for training ML models.
 

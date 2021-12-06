@@ -53,7 +53,8 @@ input_frame = frame('Input', [
     [sg.T('Search Piece'), sg.In(key='input_piece', enable_events=True), sg.FileBrowse()],
     [sg.T('Height pieces:'), sg.In(default_text=24, k='height_pieces', size=5), sg.T('Width pieces:'), sg.In(default_text=50, k='width_pieces', size=5)],
     [sg.T('Height(cm):    '), sg.In(default_text=50, k='height_cm', size=5), sg.T('Width(cm):    '), sg.In(default_text=70, k='width_cm', size=5)],
-    [sg.T('Total pieces:'), sg.T(text='1000', k='total_pieces'), sg.T('Piece width:'), sg.T(text='30(px)', k='piece_width'), sg.T('Piece height:'), sg.T(text='30(px)', k='piece_height')],
+    [sg.T('Total pieces:'), sg.T(text='1000', k='total_pieces'), sg.T('Piece width:'), sg.T(
+        text='30(px)', k='piece_width'), sg.T('Piece height:'), sg.T(text='30(px)', k='piece_height')],
 ], expand_y=False)
 
 actions_frame = sg.Frame('Actions', [
