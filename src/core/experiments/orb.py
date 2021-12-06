@@ -1,5 +1,5 @@
-import numpy as np
 import cv2 as cv
+import numpy as np
 
 
 # TODO: Move elsewhere
@@ -25,6 +25,7 @@ def draw_params(matches_mask=None):
                 matchesMask=matches_mask,  # draw only inliers
                 flags=cv.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
 
+
 ################################################################################
 ################################################################################
 
@@ -40,7 +41,6 @@ contours, contour_index = identify_contour(img_piece.copy())
 x, y, w, h = get_bounding_rect(contours[contour_index])
 img_piece = img_piece.copy()[y:y + h, x:x + w]
 
-
 print("Cropped piece to bounding box")
 
 # Initiate SIFT detector
@@ -49,7 +49,6 @@ orb = cv.ORB_create(nfeatures=100000, scoreType=cv.ORB_HARRIS_SCORE, edgeThresho
 # find the keypoints and descriptors with SIFT
 kp1, des1 = orb.detectAndCompute(img_piece, None)
 kp2, des2 = orb.detectAndCompute(img_jigsaw, None)
-
 
 # create BFMatcher object
 bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
@@ -62,7 +61,6 @@ matches = sorted(matches, key=lambda x: x.distance)
 
 # Draw first 10 matches.
 img3 = cv.drawMatches(img_piece, kp1, img_jigsaw, kp2, matches[:10], outImg=None, **draw_params())
-
 
 # # RESIZE & SHOW RESULTS
 width = int(1400)

@@ -1,5 +1,5 @@
-import numpy as np
 import cv2 as cv
+import numpy as np
 
 
 # TODO: Move elsewhere
@@ -17,6 +17,7 @@ def get_bounding_rect(contour):
     """Return the bounding rectangle given a contour"""
     x, y, w, h = cv.boundingRect(contour)
     return x, y, w, h
+
 
 ################################################################################
 ################################################################################
@@ -47,7 +48,7 @@ print("Detected keypoint features")
 # FLANN parameters
 FLANN_INDEX_KDTREE = 0
 index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=100)
-search_params = dict(checks=500)   # or pass empty dictionary
+search_params = dict(checks=500)  # or pass empty dictionary
 
 flann = cv.FlannBasedMatcher(index_params, search_params)
 
@@ -69,7 +70,6 @@ draw_params = dict(matchColor=(0, 255, 0),
                    flags=cv.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
 
 img3 = cv.drawMatchesKnn(img_jigsaw, kp1, img_piece, kp2, matches, None, **draw_params)
-
 
 # # RESIZE & SHOW RESULTS
 width = int(1400)

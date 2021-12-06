@@ -1,7 +1,6 @@
-from PIL import Image
-import numpy
-
 import cv2
+import numpy
+from PIL import Image
 
 
 def resize(image, size):

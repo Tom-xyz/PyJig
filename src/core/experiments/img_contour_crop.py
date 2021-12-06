@@ -1,9 +1,8 @@
-import imutils
 import cv2
+import imutils
 
 # load the image and display it
 image = cv2.imread("jigsaw_examples/1000_tropics_jigsaw/piece_4.jpg")
-
 
 # convert the image to grayscale and threshold it
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -25,7 +24,6 @@ cv2.putText(output, text, (x, y - 15), cv2.FONT_HERSHEY_SIMPLEX,
             0.9, (0, 255, 0), 2)
 # show the original contour image
 print("[INFO] {}".format(text))
-
 
 scale_percent = 33  # percent of original size
 width = int(output.shape[1] * scale_percent / 100)

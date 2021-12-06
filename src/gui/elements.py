@@ -51,8 +51,10 @@ input_frame = frame('Input', [
     [sg.T('Resized size'), sg.T(k='new_img_width'), sg.T('X'), sg.T(k='new_img_height')],
     [sg.HorizontalSeparator()],
     [sg.T('Search Piece'), sg.In(key='input_piece', enable_events=True), sg.FileBrowse()],
-    [sg.T('Height pieces:'), sg.In(default_text=24, k='height_pieces', size=5), sg.T('Width pieces:'), sg.In(default_text=50, k='width_pieces', size=5)],
-    [sg.T('Height(cm):    '), sg.In(default_text=50, k='height_cm', size=5), sg.T('Width(cm):    '), sg.In(default_text=70, k='width_cm', size=5)],
+    [sg.T('Height pieces:'), sg.In(default_text=24, k='height_pieces', size=5), sg.T('Width pieces:'),
+     sg.In(default_text=50, k='width_pieces', size=5)],
+    [sg.T('Height(cm):    '), sg.In(default_text=50, k='height_cm', size=5), sg.T('Width(cm):    '),
+     sg.In(default_text=70, k='width_cm', size=5)],
     [sg.T('Total pieces:'), sg.T(text='1000', k='total_pieces'), sg.T('Piece width:'), sg.T(
         text='30(px)', k='piece_width'), sg.T('Piece height:'), sg.T(text='30(px)', k='piece_height')],
 ], expand_y=False)
@@ -61,7 +63,8 @@ actions_frame = sg.Frame('Actions', [
     [button('crop'), button('grid')]
 ])
 log_frame = frame('Log', [
-    [sg.Multiline(key='log', expand_y=True, expand_x=True, echo_stdout_stderr=True, autoscroll=True, reroute_stdout=True)]
+    [sg.Multiline(key='log', expand_y=True, expand_x=True, echo_stdout_stderr=True, autoscroll=True,
+                  reroute_stdout=True)]
 ], expand_y=True)
 
 # GUI COLs #

@@ -23,6 +23,7 @@ def convert_vid_to_imgs(video, frame_rate, output_dir):
 
             print("Wrote image to path: " + file_path)
         return hasFrames
+
     sec = 0
 
     count = 1

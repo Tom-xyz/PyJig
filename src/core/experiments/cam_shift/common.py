@@ -6,17 +6,19 @@ This module contains some common routines used by other samples.
 
 # Python 2/3 compatibility
 from __future__ import print_function
-from contextlib import contextmanager
+
 import itertools as it
 import os
+import sys
+from contextlib import contextmanager
+
 import cv2 as cv
 import numpy as np
-import sys
+
 PY3 = sys.version_info[0] == 3
 
 if PY3:
     from functools import reduce
-
 
 # built-in modules
 
@@ -82,7 +84,7 @@ def lookat(eye, target, up=(0, 0, 1)):
 
 def mtx2rvec(R):
     w, u, vt = cv.SVDecomp(R - np.eye(3))
-    p = vt[0] + u[:, 0] * w[0]    # same as np.dot(R, vt[0])
+    p = vt[0] + u[:, 0] * w[0]  # same as np.dot(R, vt[0])
     c = np.dot(vt[0], p)
     s = np.dot(vt[1], p)
     axis = np.cross(vt[0], vt[1])
@@ -160,7 +162,7 @@ def clock():
 
 @contextmanager
 def Timer(msg):
-    print(msg, '...',)
+    print(msg, '...', )
     start = clock()
     try:
         yield

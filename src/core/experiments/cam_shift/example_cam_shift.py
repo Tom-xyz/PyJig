@@ -24,11 +24,15 @@ Keys:
 
 # Python 2/3 compatibility
 from __future__ import print_function
-from video import presets
-import video
+
+import sys
+
 import cv2 as cv
 import numpy as np
-import sys
+
+import video
+from video import presets
+
 PY3 = sys.version_info[0] == 3
 
 if PY3:
@@ -70,7 +74,8 @@ class App(object):
         img = np.zeros((256, bin_count * bin_w, 3), np.uint8)
         for i in xrange(bin_count):
             h = int(self.hist[i])
-            cv.rectangle(img, (i * bin_w + 2, 255), ((i + 1) * bin_w - 2, 255 - h), (int(180.0 * i / bin_count), 255, 255), -1)
+            cv.rectangle(img, (i * bin_w + 2, 255), ((i + 1) * bin_w - 2, 255 - h),
+                         (int(180.0 * i / bin_count), 255, 255), -1)
         img = cv.cvtColor(img, cv.COLOR_HSV2BGR)
         cv.imshow('hist', img)
 
@@ -121,6 +126,7 @@ class App(object):
 if __name__ == '__main__':
     print(__doc__)
     import sys
+
     try:
         video_src = "jigsaw_examples/1000_tropics_jigsaw/jigsaw_video.mov"
     except:  # noqa

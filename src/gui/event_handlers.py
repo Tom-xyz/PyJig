@@ -1,5 +1,5 @@
-import sys
 import io
+import sys
 
 from PIL import Image
 
@@ -64,7 +64,9 @@ def handle_viewer_event(context, event, values):
     crop_cords.append(click_xy_cords)
 
     if action == 'crop' and len(crop_cords) == 2:
-        cropped_image = resize(viewer_image.crop((crop_cords[0][0], crop_cords[0][1], crop_cords[1][0], crop_cords[1][1])), viewer_canvas_size)
+        cropped_image = resize(
+            viewer_image.crop((crop_cords[0][0], crop_cords[0][1], crop_cords[1][0], crop_cords[1][1])),
+            viewer_canvas_size)
         draw_viewer_image(context, cropped_image)
         context.set('crop_cords', [])
         print('Successfully cropped image')
