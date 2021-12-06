@@ -60,7 +60,7 @@ input_frame = frame('Input', [
 ], expand_y=False)
 
 actions_frame = sg.Frame('Actions', [
-    [button('crop'), button('grid')]
+    [button('crop'), button('grid'), button('ORB'), button('SIFT')]
 ])
 log_frame = frame('Log', [
     [sg.Multiline(key='log', expand_y=True, expand_x=True, echo_stdout_stderr=True, autoscroll=True,

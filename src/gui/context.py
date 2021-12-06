@@ -10,8 +10,8 @@ class WindowContext():
             'puzzle': None
         }
 
-    def get(self, k):
-        return self.state[k]
+    def get(self, k, default=None):
+        return self.state.get(k, default)
 
     def set(self, k, v):
         self.state[k] = v

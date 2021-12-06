@@ -1,11 +1,14 @@
 import io
 import sys
 
+import cv2 as cv
+import numpy as np
+
 from PIL import Image
 
 # from gui.elements import search_piece_window
 from gui.elements import pv_canvas_size, jv_canvas_size
-from src.utils.img_utils import resize, cut_image_to_grid
+from src.utils.img_utils import resize, cut_image_to_grid, run_SIFT_search, run_ORB_search
 
 
 def handle_None_event(*_):
@@ -37,18 +40,15 @@ def handle_input_piece_event(context, event, values):
 
     infile = values['input_piece']
     original_piece_image = Image.open(infile)
-    piece_image = resize(original_piece_image, pv_canvas_size)
-    draw_image('piece_viewer', context, piece_image)
 
-    # TODO: Search puzzle for piece
-    # puzzle.grid.search()
+    p_image = resize(original_piece_image, pv_canvas_size)
+    j_image = context.get('viewer_image')
+    draw_image('piece_viewer', context, p_image)
+    mode = context.get('mode', 'ORB')
 
-    piece_x_pos = (0, 0)
-    piece_y_pos = (0, 0)
-    viewer = context.window['viewer']
-    viewer.DrawRectangle((200, 200), (230, 230), line_color="red", line_width=3)
-
-    print(f'Found piece match at ({piece_x_pos}, {piece_y_pos})')
+    print(f'Searching for piece, mode: {mode}')
+    img_with_matches = search_for_piece(j_image, p_image, mode=mode)
+    draw_image('viewer', context, img_with_matches)
 
 
 def handle_viewer_event(context, event, values):
@@ -74,7 +74,7 @@ def handle_button_crop_event(context, event, values):
     context.set('crop_cords', [])
 
     if context.get('action') == 'crop':
-        context.set('action', 'none')
+        context.set('action', None)
         print('Exited cropping mode')
     else:
         context.set('action', 'crop')
@@ -84,6 +84,30 @@ def handle_button_crop_event(context, event, values):
 def handle_button_grid_event(context, event, values):
     grid_image = cut_image_to_grid(context.get('viewer'))
     draw_image('viewer', context, grid_image)
+
+
+def handle_button_SIFT_event(context, event, values):
+    print('Set mode to SIFT')
+    context.set('mode', 'SIFT')
+
+
+def handle_button_ORB_event(context, event, values):
+    print('Set mode to ORB ')
+    context.set('mode', 'ORB')
+
+
+# TODO: Replace with Jigsaw.search()
+def search_for_piece(j_image, p_image, mode='ORB'):
+    # TODO: Determine appropriate color mode
+    j_image = cv.cvtColor(np.array(j_image), cv.COLOR_RGB2BGR)
+    p_image = cv.cvtColor(np.array(p_image), cv.COLOR_RGB2BGR)
+
+    if mode == 'ORB':
+        return run_ORB_search(j_image, p_image)
+    elif mode == 'SIFT':
+        return run_SIFT_search(j_image, p_image)
+    else:
+        raise Exception(f'Invalid mode specified: {mode}')
 
 
 def draw_image(key, context, image, pos=(0, 0)):
