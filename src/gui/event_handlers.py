@@ -99,6 +99,10 @@ def handle_button_ORB_event(context, event, values):
     context.set('mode', 'ORB')
 
 
+def handle_debug_event(context, event, values):
+    print(f'Got debug event: {event}, values: {values}')
+
+
 # TODO: Replace with Jigsaw.search()
 def search_for_piece(j_image, p_image, mode='ORB'):
     # TODO: Determine appropriate color mode
