@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 
 # from gui.elements import search_piece_window
+from core.experiments.img_contour_crop import contour_crop
 from gui.elements import pv_canvas_size, jv_canvas_size
 from src.utils.img_utils import resize, cut_image_to_grid, run_SIFT_search, run_ORB_search
 
@@ -39,11 +40,13 @@ def handle_input_piece_event(context, event, values):
     print('Searching for piece')
 
     infile = values['input_piece']
-    original_piece_image = Image.open(infile)
+    original_piece_image = cv.imread(infile)
 
-    p_image = resize(original_piece_image, pv_canvas_size)
+    p_image = contour_crop(np.array(original_piece_image))
+    p_image_resized = resize(p_image, pv_canvas_size)
+
     j_image = context.get('viewer_image')
-    draw_image('piece_viewer', context, p_image)
+    draw_image('piece_viewer', context, p_image_resized)
     mode = context.get('mode', 'ORB')
 
     print(f'Searching for piece, mode: {mode}')
@@ -99,6 +102,7 @@ def handle_button_ORB_event(context, event, values):
 # TODO: Replace with Jigsaw.search()
 def search_for_piece(j_image, p_image, mode='ORB'):
     # TODO: Determine appropriate color mode
+    # TODO: Remove this, causes image loss
     j_image = cv.cvtColor(np.array(j_image), cv.COLOR_RGB2BGR)
     p_image = cv.cvtColor(np.array(p_image), cv.COLOR_RGB2BGR)
 
