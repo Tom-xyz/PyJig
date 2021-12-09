@@ -7,9 +7,9 @@ import numpy as np
 from PIL import Image
 
 # from gui.elements import search_piece_window
-from core.experiments.img_contour_crop import contour_crop
-from gui.elements import pv_canvas_size, jv_canvas_size
-from src.utils.img_utils import resize, cut_image_to_grid, run_SIFT_search, run_ORB_search
+from pyjig.core.experiments.img_contour_crop import contour_crop
+from pyjig.gui.elements import pv_canvas_size, jv_canvas_size
+from pyjig.utils.img_utils import resize, cut_image_to_grid, run_SIFT_search, run_ORB_search
 
 
 def handle_None_event(*_):
@@ -99,8 +99,8 @@ def handle_button_ORB_event(context, event, values):
     context.set('mode', 'ORB')
 
 
-def handle_debug_event(context, event, values):
-    print(f'Got debug event: {event}, values: {values}')
+def handle_test_event(context, event, values):
+    print(f'Got test event: {event}, values: {values}')
 
 
 # TODO: Replace with Jigsaw.search()

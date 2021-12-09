@@ -1,4 +1,4 @@
-from gui.core import PyJigGUI
+from pyjig.gui.core import PyJigGUI
 
 
 def main():

@@ -4,7 +4,7 @@ from unittest.mock import Mock
 import pytest
 from PySimpleGUI import Window
 
-from src.gui.core import PyJigGUI
+from pyjig.gui.core import PyJigGUI
 
 
 @pytest.fixture()
@@ -14,7 +14,7 @@ def gui():
     with mock.patch('PySimpleGUI.Window') as mock_window:
         mock_gui_window = Mock()
         mock_window.return_value = mock_gui_window
-        mock_gui_window.read.return_value = ('debug', 'test_value')
+        mock_gui_window.read.return_value = ('test', 'test_value')
         gui = PyJigGUI()
 
     mock_active = Mock()
