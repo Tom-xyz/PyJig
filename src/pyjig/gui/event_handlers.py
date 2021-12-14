@@ -7,9 +7,9 @@ import numpy as np
 from PIL import Image
 
 # from gui.elements import search_piece_window
-from pyjig.core.experiments.img_contour_crop import contour_crop
 from pyjig.gui.elements import pv_canvas_size, jv_canvas_size
-from pyjig.utils.img_utils import resize, cut_image_to_grid, run_SIFT_search, run_ORB_search
+from pyjig.utils.img_utils import resize, cut_image_to_grid, run_SIFT_search, run_ORB_search, contour_crop, \
+    convert_to_cv_img
 
 
 def handle_None_event(*_):
@@ -42,7 +42,7 @@ def handle_input_piece_event(context, event, values):
     infile = values['input_piece']
     original_piece_image = cv.imread(infile)
 
-    p_image = contour_crop(np.array(original_piece_image))
+    p_image = contour_crop(original_piece_image)
     p_image_resized = resize(p_image, pv_canvas_size)
 
     j_image = context.get('viewer_image')
@@ -107,8 +107,8 @@ def handle_test_event(context, event, values):
 def search_for_piece(j_image, p_image, mode='ORB'):
     # TODO: Determine appropriate color mode
     # TODO: Remove this, causes image loss
-    j_image = cv.cvtColor(np.array(j_image), cv.COLOR_RGB2BGR)
-    p_image = cv.cvtColor(np.array(p_image), cv.COLOR_RGB2BGR)
+    j_image = convert_to_cv_img(j_image)
+    p_image = convert_to_cv_img(p_image)
 
     if mode == 'ORB':
         return run_ORB_search(j_image, p_image)

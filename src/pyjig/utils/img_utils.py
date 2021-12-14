@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import imutils
 from PIL import Image
 
 
@@ -10,7 +11,7 @@ def resize(image, size):
 
 
 def cut_image_to_grid(pil_image):
-    img = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+    img = convert_to_cv_img(pil_image)
     img_height = img.shape[0]
     img_width = img.shape[1]
 
@@ -40,7 +41,7 @@ def cut_image_to_grid(pil_image):
             else:
                 cv2.rectangle(img, (x, y), (x1, y1), (0, 255, 0), 1)
 
-    return Image.fromarray(img)
+    return convert_to_pil_img(img)
 
 
 def identify_contour(piece, threshold_low=99, threshold_high=255):
@@ -56,6 +57,36 @@ def get_bounding_rect(contour):
     """Return the bounding rectangle given a contour"""
     x, y, w, h = cv2.boundingRect(contour)
     return x, y, w, h
+
+
+def contour_crop(img, thresh=120, color=255):
+    # convert the image to grayscale and threshold it
+    gray = convert_to_cv_img(img, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.threshold(gray, thresh, color,
+                           cv2.THRESH_BINARY_INV)[1]
+
+    #  find the largest contour in the threshold image
+    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+                            cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
+    c = max(cnts, key=cv2.contourArea)
+
+    color_mask = (color, color, color)
+
+    # Extract image inside c
+    output = img.copy()
+    mask = np.zeros_like(output)  # Create mask where white is what we want, black otherwise
+    cv2.drawContours(mask, [c], -1, color_mask, -1)  # Draw filled contour in mask
+    out = np.zeros_like(output)  # Extract out the object and place into output image
+    out[mask == color_mask] = output[mask == color_mask]
+
+    # Crop image to contour area
+    (y, x, z) = np.where(mask == color_mask)
+    (topy, topx) = (np.min(y), np.min(x))
+    (bottomy, bottomx) = (np.max(y), np.max(x))
+    out = out[topy:bottomy + 1, topx:bottomx + 1]
+
+    return convert_to_pil_img(out)
 
 
 def draw_params(matches_mask=None):
@@ -84,7 +115,7 @@ def run_ORB_search(j_img, p_img):
 
     # Draw first 10 matches.
     img = cv2.drawMatches(j_img, kp1, p_img, kp2, matches[:10], outImg=None, **draw_params())
-    return Image.fromarray(img)
+    return convert_to_pil_img(img)
 
 
 def run_SIFT_search(j_img, p_img):
@@ -117,4 +148,17 @@ def run_SIFT_search(j_img, p_img):
             matches_mask[i] = [1, 0]
 
     img = cv2.drawMatchesKnn(j_img, kp1, p_img, kp2, matches, None, **draw_params(matches_mask))
-    return Image.fromarray(img)
+    return convert_to_pil_img(img)
+
+
+def convert_to_cv_img(pil_img, mode=cv2.COLOR_RGB2BGR):
+    cv_img = cv2.cvtColor(np.array(pil_img), mode)
+    return cv_img
+
+
+def convert_to_pil_img(cv_img, mode=cv2.COLOR_BGR2RGB):
+    # OpenCV uses BGR and PIL uses RGB, flip from BGR to RGB before converting to PIL Image
+    cv_rgb = cv2.cvtColor(cv_img, mode)
+    pil_img = Image.fromarray(cv_rgb)
+
+    return pil_img
