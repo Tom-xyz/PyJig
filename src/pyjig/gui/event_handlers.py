@@ -9,7 +9,7 @@ from PIL import Image
 # from gui.elements import search_piece_window
 from pyjig.gui.elements import pv_canvas_size, jv_canvas_size
 from pyjig.utils.img_utils import resize, cut_image_to_grid, run_SIFT_search, run_ORB_search, contour_crop, \
-    convert_to_cv_img
+    convert_to_cv_img, load_img_from_input
 
 
 def handle_None_event(*_):
@@ -20,9 +20,11 @@ def handle_Exit_event(*_):
     sys.exit(0)
 
 
-def handle_input_image_event(context, event, values):
-    infile = values['input_image']
-    original_image = Image.open(infile)
+def handle_input_image_event(context, values):
+    original_image = load_img_from_input('input_image', values)
+    if original_image is None:
+        return
+
     viewer_image = resize(original_image, jv_canvas_size)
 
     context.set('original_image', original_image)
@@ -36,11 +38,10 @@ def handle_input_image_event(context, event, values):
     draw_image('viewer', context, viewer_image)
 
 
-def handle_input_piece_event(context, event, values):
-    print('Searching for piece')
-
-    infile = values['input_piece']
-    original_piece_image = cv.imread(infile)
+def handle_input_piece_event(context, values):
+    original_piece_image = load_img_from_input('input_piece', values)
+    if original_piece_image is None:
+        return
 
     p_image = contour_crop(original_piece_image)
     p_image_resized = resize(p_image, pv_canvas_size)
@@ -54,7 +55,7 @@ def handle_input_piece_event(context, event, values):
     draw_image('viewer', context, img_with_matches)
 
 
-def handle_viewer_event(context, event, values):
+def handle_viewer_event(context, values):
     click_xy_cords = values.get('viewer', None)
     print(f'Mouse clicked at {click_xy_cords}')
 
@@ -70,10 +71,11 @@ def handle_viewer_event(context, event, values):
             jv_canvas_size)
         draw_image('viewer', context, cropped_image)
         context.set('crop_cords', [])
+        context.set('viewer_image', cropped_image)
         print('Successfully cropped image')
 
 
-def handle_button_crop_event(context, event, values):
+def handle_button_crop_event(context, values):
     context.set('crop_cords', [])
 
     if context.get('action') == 'crop':
@@ -84,29 +86,28 @@ def handle_button_crop_event(context, event, values):
         print('Entered cropping mode, click on the 2 corners of the puzzle (top left, bottom right)')
 
 
-def handle_button_grid_event(context, event, values):
+def handle_button_grid_event(context, values):
     grid_image = cut_image_to_grid(context.get('viewer'))
     draw_image('viewer', context, grid_image)
 
 
-def handle_button_SIFT_event(context, event, values):
+def handle_button_SIFT_event(context, values):
     print('Set mode to SIFT')
     context.set('mode', 'SIFT')
 
 
-def handle_button_ORB_event(context, event, values):
+def handle_button_ORB_event(context, values):
     print('Set mode to ORB ')
     context.set('mode', 'ORB')
 
 
-def handle_test_event(context, event, values):
-    print(f'Got test event: {event}, values: {values}')
+def handle_test_event(context, values):
+    print(f'Got test event, values: {values}')
 
 
 # TODO: Replace with Jigsaw.search()
 def search_for_piece(j_image, p_image, mode='ORB'):
-    # TODO: Determine appropriate color mode
-    # TODO: Remove this, causes image loss
+    print('Searching for piece')
     j_image = convert_to_cv_img(j_image)
     p_image = convert_to_cv_img(p_image)
 

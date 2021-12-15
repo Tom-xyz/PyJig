@@ -20,4 +20,4 @@ class PyJigGUI():
         while self._is_active():
             event, values = self.window.read()
             event_handler_func = getattr(pyjig.gui.event_handlers, f'handle_{event}_event')
-            event_handler_func(self.context, event, values)
+            event_handler_func(self.context, values)

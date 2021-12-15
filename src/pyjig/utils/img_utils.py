@@ -162,3 +162,10 @@ def convert_to_pil_img(cv_img, mode=cv2.COLOR_BGR2RGB):
     pil_img = Image.fromarray(cv_rgb)
 
     return pil_img
+
+
+def load_img_from_input(key, values):
+    values = {k: v for k, v in values.items() if v}
+    infile = values.get(key)
+    if infile is not None:
+        return cv2.imread(infile)
