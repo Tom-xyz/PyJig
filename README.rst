@@ -23,7 +23,10 @@
         :alt: Twitter
         :target: https://twitter.com/PyJig
 
-|
+
+.. image:: https://www.codefactor.io/repository/github/tom-xyz/pyjig/badge
+   :target: https://www.codefactor.io/repository/github/tom-xyz/pyjig
+   :alt: CodeFactor
 
 =====
 PyJig
