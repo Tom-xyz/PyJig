@@ -7,6 +7,7 @@ from PIL import Image
 def resize(image, size):
     print(f'Resizing image to:{size}')
     resized_image = image.resize(size)
+    # resized_image = np.resize(image, size)
     return resized_image
 
 
@@ -62,6 +63,7 @@ def get_bounding_rect(contour):
 def contour_crop(img, thresh=120, color=255):
     # convert the image to grayscale and threshold it
     gray = convert_to_cv_img(img, cv2.COLOR_BGR2GRAY)
+    img = convert_to_cv_img(img)
     thresh = cv2.threshold(gray, thresh, color,
                            cv2.THRESH_BINARY_INV)[1]
 
@@ -168,4 +170,5 @@ def load_img_from_input(key, values):
     values = {k: v for k, v in values.items() if v}
     infile = values.get(key)
     if infile is not None:
-        return cv2.imread(infile)
+        # return cv2.imread(infile)
+        return Image.open(infile)
