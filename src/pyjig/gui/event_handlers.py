@@ -1,12 +1,9 @@
 import io
 import sys
 
-import cv2 as cv
-import numpy as np
-
-from PIL import Image
-
 # from gui.elements import search_piece_window
+from pyjig.gui.constants import ORIGINAL_IMG_WIDTH, ORIGINAL_IMG_HEIGHT, \
+    NEW_IMG_WIDTH, NEW_IMG_HEIGHT, J_IMG, VIEWER_J_IMG, INPUT_J_IMG_KEY, INPUT_P_IMG_KEY
 from pyjig.gui.elements import pv_canvas_size, jv_canvas_size
 from pyjig.utils.img_utils import resize, cut_image_to_grid, run_SIFT_search, run_ORB_search, contour_crop, \
     convert_to_cv_img, load_img_from_input
@@ -20,38 +17,40 @@ def handle_Exit_event(*_):
     sys.exit(0)
 
 
-def handle_input_image_event(context, values):
-    original_image = load_img_from_input('input_image', values)
+def handle_input_jigsaw_event(context, values):
+    original_image = load_img_from_input(INPUT_J_IMG_KEY, values)
     if original_image is None:
         return
 
     viewer_image = resize(original_image, jv_canvas_size)
 
-    context.set('original_image', original_image)
-    context.set('viewer_image', viewer_image)
+    context.set(J_IMG, original_image)
+    context.set(VIEWER_J_IMG, viewer_image)
 
-    context.window['original_img_width'].update(original_image.size[0])
-    context.window['original_img_height'].update(original_image.size[1])
-    context.window['new_img_width'].update(viewer_image.size[0])
-    context.window['new_img_height'].update(viewer_image.size[1])
+    context.window[ORIGINAL_IMG_WIDTH].update(original_image.size[0])
+    context.window[ORIGINAL_IMG_HEIGHT].update(original_image.size[1])
+    context.window[NEW_IMG_WIDTH].update(viewer_image.size[0])
+    context.window[NEW_IMG_HEIGHT].update(viewer_image.size[1])
 
     draw_image('viewer', context, viewer_image)
 
 
 def handle_input_piece_event(context, values):
-    original_piece_image = load_img_from_input('input_piece', values)
+    original_piece_image = load_img_from_input(INPUT_P_IMG_KEY, values)
     if original_piece_image is None:
         return
 
     p_image = contour_crop(original_piece_image)
     p_image_resized = resize(p_image, pv_canvas_size)
+    p_image_resized_2 = resize(p_image, (100, 100))
 
-    j_image = context.get('viewer_image')
+    j_image = context.get(J_IMG)
     draw_image('piece_viewer', context, p_image_resized)
     mode = context.get('mode', 'ORB')
 
     print(f'Searching for piece, mode: {mode}')
-    img_with_matches = search_for_piece(j_image, p_image, mode=mode)
+    img_with_matches = search_for_piece(j_image, p_image_resized_2, mode=mode)
+    img_with_matches = resize(img_with_matches, jv_canvas_size)
     draw_image('viewer', context, img_with_matches)
 
 
@@ -73,6 +72,11 @@ def handle_viewer_event(context, values):
         context.set('crop_cords', [])
         context.set('viewer_image', cropped_image)
         print('Successfully cropped image')
+
+
+def handle_piece_viewer_event(context, values):
+    click_xy_cords = values.get('piece_viewer', None)
+    print(f'Mouse clicked at {click_xy_cords}')
 
 
 def handle_button_crop_event(context, values):
@@ -99,6 +103,11 @@ def handle_button_SIFT_event(context, values):
 def handle_button_ORB_event(context, values):
     print('Set mode to ORB ')
     context.set('mode', 'ORB')
+
+
+# TODO: Impl zoom on graph hover
+def handle_mouse_Hover_event(context, values):
+    print("Mouse hover event: TODO")
 
 
 def handle_test_event(context, values):

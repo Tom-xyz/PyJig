@@ -1,13 +1,12 @@
 import cv2
-import numpy as np
 import imutils
+import numpy as np
 from PIL import Image
 
 
 def resize(image, size):
     print(f'Resizing image to:{size}')
     resized_image = image.resize(size)
-    # resized_image = np.resize(image, size)
     return resized_image
 
 
@@ -45,31 +44,27 @@ def cut_image_to_grid(pil_image):
     return convert_to_pil_img(img)
 
 
-def identify_contour(piece, threshold_low=99, threshold_high=255):
-    """Identify the contour around the piece"""
-    piece = cv2.cvtColor(piece, cv2.COLOR_BGR2GRAY)  # better in grayscale
-    ret, thresh = cv2.threshold(piece, threshold_low, threshold_high, 0)
-    contours, hiers = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    contour_sorted = np.argsort(list(map(cv2.contourArea, contours)))
-    return contours, contour_sorted[-2]
+def scale_contour(cnt, scale):
+    M = cv2.moments(cnt)
+    cx = int(M['m10'] / M['m00'])
+    cy = int(M['m01'] / M['m00'])
 
+    cnt_norm = cnt - [cx, cy]
+    cnt_scaled = cnt_norm * scale
+    cnt_scaled = cnt_scaled + [cx, cy]
+    cnt_scaled = cnt_scaled.astype(np.int32)
 
-def get_bounding_rect(contour):
-    """Return the bounding rectangle given a contour"""
-    x, y, w, h = cv2.boundingRect(contour)
-    return x, y, w, h
+    return cnt_scaled
 
 
 def contour_crop(img, thresh=120, color=255):
     # convert the image to grayscale and threshold it
     gray = convert_to_cv_img(img, cv2.COLOR_BGR2GRAY)
     img = convert_to_cv_img(img)
-    thresh = cv2.threshold(gray, thresh, color,
-                           cv2.THRESH_BINARY_INV)[1]
+    thresh = cv2.threshold(gray, thresh, color, cv2.THRESH_BINARY_INV)[1]
 
     #  find the largest contour in the threshold image
-    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-                            cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = imutils.grab_contours(cnts)
     c = max(cnts, key=cv2.contourArea)
 
@@ -92,15 +87,24 @@ def contour_crop(img, thresh=120, color=255):
 
 
 def draw_params(matches_mask=None):
-    return dict(matchColor=(0, 0, 255),  # draw matches in blue
-                singlePointColor=(255, 0, 0),
-                matchesMask=matches_mask,  # draw only inliers
-                flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
+    return dict(  # matchColor=(0, 0, 255),  # draw matches in blue
+        # singlePointColor=(255, 0, 0),
+        matchesThickness=10,
+        matchesMask=matches_mask,  # draw only inliers
+        flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
+
+
+def draw_params_SIFT(matches_mask=None):
+    return dict(
+        matchColor=(0, 0, 255),  # draw matches in blue
+        singlePointColor=(255, 0, 0),
+        matchesMask=matches_mask,  # draw only inliers
+        flags=cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS)
 
 
 def run_ORB_search(j_img, p_img):
     # Initiate SIFT detector
-    orb = cv2.ORB_create(nfeatures=100000, scoreType=cv2.ORB_HARRIS_SCORE, edgeThreshold=20, scaleFactor=1.5)
+    orb = cv2.ORB_create(nfeatures=1000000, scoreType=cv2.ORB_HARRIS_SCORE)
 
     # find the keypoints and descriptors with SIFT
     kp1, des1 = orb.detectAndCompute(j_img, None)
@@ -116,7 +120,7 @@ def run_ORB_search(j_img, p_img):
     matches = sorted(matches, key=lambda x: x.distance)
 
     # Draw first 10 matches.
-    img = cv2.drawMatches(j_img, kp1, p_img, kp2, matches[:10], outImg=None, **draw_params())
+    img = cv2.drawMatches(j_img, kp1, p_img, kp2, matches[:10], None, **draw_params())
     return convert_to_pil_img(img)
 
 
@@ -146,10 +150,10 @@ def run_SIFT_search(j_img, p_img):
 
     # ratio test as per Lowe's paper
     for i, (m, n) in enumerate(matches):
-        if m.distance < 0.7 * n.distance:
+        if m.distance < 0.6 * n.distance:
             matches_mask[i] = [1, 0]
 
-    img = cv2.drawMatchesKnn(j_img, kp1, p_img, kp2, matches, None, **draw_params(matches_mask))
+    img = cv2.drawMatchesKnn(j_img, kp1, p_img, kp2, matches, None, **draw_params_SIFT(matches_mask))
     return convert_to_pil_img(img)
 
 
@@ -169,6 +173,7 @@ def convert_to_pil_img(cv_img, mode=cv2.COLOR_BGR2RGB):
 def load_img_from_input(key, values):
     values = {k: v for k, v in values.items() if v}
     infile = values.get(key)
-    if infile is not None:
-        # return cv2.imread(infile)
-        return Image.open(infile)
+    if infile is None:
+        raise Exception('Input file is empty.')
+
+    return Image.open(infile)

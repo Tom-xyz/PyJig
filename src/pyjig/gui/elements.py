@@ -1,5 +1,8 @@
 import PySimpleGUI as sg
 
+from pyjig.gui.constants import NEW_IMG_HEIGHT, ORIGINAL_IMG_HEIGHT, ORIGINAL_IMG_WIDTH, NEW_IMG_WIDTH, \
+    INPUT_J_IMG_KEY, INPUT_P_IMG_KEY
+
 
 def frame(title, layout, expand_y=True, expand_x=True, **kwargs):
     return sg.Frame(title, layout, expand_y=expand_y, expand_x=expand_x, **kwargs)
@@ -46,11 +49,11 @@ piece_viewer = sg.Graph(
 piece_viewer_frame = frame('Piece Viewer', [[piece_viewer]], expand_y=False)
 
 input_frame = frame('Input', [
-    [sg.T('Load Jigsaw'), sg.In(key='input_image', enable_events=True), sg.FileBrowse()],
-    [sg.T('Original size'), sg.T(k='original_img_height'), sg.T('X'), sg.T(k='original_img_width')],
-    [sg.T('Resized size'), sg.T(k='new_img_width'), sg.T('X'), sg.T(k='new_img_height')],
+    [sg.T('Load Jigsaw'), sg.In(key=INPUT_J_IMG_KEY, enable_events=True), sg.FileBrowse()],
+    [sg.T('Original size'), sg.T(k=ORIGINAL_IMG_HEIGHT), sg.T('X'), sg.T(k=ORIGINAL_IMG_WIDTH)],
+    [sg.T('Resized size'), sg.T(k=NEW_IMG_HEIGHT), sg.T('X'), sg.T(k=NEW_IMG_WIDTH)],
     [sg.HorizontalSeparator()],
-    [sg.T('Search Piece'), sg.In(key='input_piece', enable_events=True), sg.FileBrowse()],
+    [sg.T('Search Piece'), sg.In(key=INPUT_P_IMG_KEY, enable_events=True), sg.FileBrowse()],
     [sg.T('Height pieces:'), sg.In(default_text=24, k='height_pieces', size=5), sg.T('Width pieces:'),
      sg.In(default_text=50, k='width_pieces', size=5)],
     [sg.T('Height(cm):    '), sg.In(default_text=50, k='height_cm', size=5), sg.T('Width(cm):    '),
