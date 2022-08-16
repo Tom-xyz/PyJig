@@ -36,7 +36,8 @@ PyJig
     Jigsaw puzzle solver/aid written in Python
 
 
-TODO: Long description
+**Note**: Contributions welcome!
+
 
 =====
 TODO List
@@ -45,10 +46,12 @@ TODO List
 
 Things to attempt:
 
-- [WIP] Using OpenCV to find pieces in Jigsaw puzzle box cover image
-- [TODO] Developing a library for realtime jigsaw puzzle analysis via OAK-D-LITE
+- [WIP] Using OpenCV to find pieces in Jigsaw puzzle box cover image.
+- [TODO] Experiment with AI 4k Camera
     - https://www.kickstarter.com/projects/opencv/opencv-ai-kit-oak-depth-camera-4k-cv-edge-object-detection
-- [TODO] Refactor everything
+- [TODO] Mobile app for simple piece capture feed.
+- [TODO] Build out core lib and use in GUI.
+- [TODO] Finish implementing GUI functionality.
 
 =====
 GUI Screenshot (version 0.2)
@@ -61,6 +64,8 @@ GUI Screenshot (version 0.2)
 ====
 Find Piece Contours (Experiment)
 ====
+
+This was simply a first attempt at retrieving only the jigsaw piece from the photo.
 
     .. image:: https://github.com/Tom-xyz/Pyjig/raw/main/screenshots/contour_test.png
         :alt: contour_test
